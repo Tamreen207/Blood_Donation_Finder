@@ -29,8 +29,10 @@ import {
 } from 'lucide-react';
 import { Link, NavLink, Route, Routes } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import FindBloodPage from './pages/FindBloodPage';
+import BloodBanksPage from './pages/BloodBanksPage';
 import BloodBankDetailsPage from './pages/BloodBankDetailsPage';
 import FindDonorPage from './pages/FindDonorPage';
 import DonorProfilePage from './pages/DonorProfilePage';
@@ -49,100 +51,54 @@ import AdminDashboard from './pages/AdminDashboard';
 
 const navItems = [
 	{ label: 'Home', to: '/' },
+	{ label: 'Find Blood', to: '/find-blood' },
+	{ label: 'Find Donor', to: '/find-donor' },
+	{ label: 'Blood Banks', to: '/blood-banks' },
 ];
 
 const stats = [
-	{ value: '10,000+', label: 'Registered Donors', icon: Users },
-	{ value: '500+', label: 'Blood Banks', icon: Building2 },
-	{ value: '25,000+', label: 'Successful Donations', icon: HeartPulse },
 	{ value: '24/7', label: 'Emergency Support', icon: Clock3 },
+	{ value: 'Live', label: 'Request Tracking', icon: HeartPulse },
+	{ value: 'Secure', label: 'Role-based Access', icon: ShieldCheck },
+	{ value: 'Nearby', label: 'Location-aware Search', icon: Building2 },
 ];
 
 const steps = [
-	{
-		title: 'Search',
-		description: 'Enter blood group, location, and urgency to see nearby matches instantly.',
-		icon: Search,
-	},
-	{
-		title: 'Find a Match',
-		description: 'Compare available donors and blood banks with compatibility and distance insights.',
-		icon: BadgeCheck,
-	},
-	{
-		title: 'Request Blood',
-		description: 'Send a focused request to the best available source and keep the process moving.',
-		icon: LayoutGrid,
-	},
-	{
-		title: 'Save a Life',
-		description: 'Coordinate the handoff and help the right blood reach the right person quickly.',
-		icon: HeartPulse,
-	},
+	{ title: 'Search', description: 'Enter blood group and location to find nearby matches.', icon: Search },
+	{ title: 'Find a Match', description: 'Compare compatible donors and blood banks.', icon: BadgeCheck },
+	{ title: 'Request Blood', description: 'Submit a request with hospital and urgency details.', icon: LayoutGrid },
+	{ title: 'Coordinate', description: 'Track responses and coordinate fulfillment.', icon: HeartPulse },
 ];
 
 const features = [
-	{
-		title: 'Find Blood',
-		description: 'Search compatible blood quickly with live location-aware results.',
-		icon: Search,
-	},
-	{
-		title: 'Find Donors',
-		description: 'Discover nearby donors who match the requested blood group.',
-		icon: Users,
-	},
-	{
-		title: 'Locate Blood Banks',
-		description: 'See verified blood banks and their available inventory in one place.',
-		icon: Building2,
-	},
-	{
-		title: 'Emergency Requests',
-		description: 'Raise urgent requests for faster visibility and prioritization.',
-		icon: AlertTriangle,
-	},
-	{
-		title: 'Track Requests',
-		description: 'Monitor request status and response history with confidence.',
-		icon: Clock3,
-	},
-	{
-		title: 'Donation History',
-		description: 'Keep an organized record of past donations and support activity.',
-		icon: HeartPulse,
-	},
+	{ title: 'Find Blood', description: 'Search compatible blood from registered sources.', icon: Search },
+	{ title: 'Find Donors', description: 'Discover nearby available donors by blood group.', icon: Users },
+	{ title: 'Locate Blood Banks', description: 'View registered blood banks and inventory status.', icon: Building2 },
+	{ title: 'Emergency Requests', description: 'Raise urgent requests for faster visibility.', icon: AlertTriangle },
+	{ title: 'Track Requests', description: 'Monitor request status and responses.', icon: Clock3 },
+	{ title: 'Donation History', description: 'View donation and request activity records.', icon: HeartPulse },
 ];
 
 const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
 const testimonials = [
-	{
-		quote:
-			'I signed up as a donor and found the process straightforward. The matching flow made it easy to respond when someone nearby needed help.',
-		name: 'Sample Blood Donor',
-		role: 'Donor',
-	},
-	{
-		quote:
-			'We needed a compatible donor fast, and the platform made it simple to reach nearby options without losing time to manual searching.',
-		name: 'Sample Patient Family Member',
-		role: 'Patient Support',
-	},
-	{
-		quote:
-			'Our blood bank visibility improved immediately. Requests are cleaner, and coordination with donors is much more efficient now.',
-		name: 'Sample Blood Bank Representative',
-		role: 'Blood Bank',
-	},
+	{ quote: 'The request flow helps connect patients with nearby donors and blood banks quickly.', name: 'Patient Support User', role: 'Seeker' },
+	{ quote: 'Donor availability and request visibility make coordination straightforward.', name: 'Registered Donor', role: 'Donor' },
+	{ quote: 'Inventory and request tools help manage responses in one place.', name: 'Blood Bank Staff', role: 'Blood Bank' },
 ];
 
 const quickLinks = [
 	{ label: 'Home', to: '/' },
+	{ label: 'Find Blood', to: '/find-blood' },
+	{ label: 'Find Donor', to: '/find-donor' },
+	{ label: 'Blood Banks', to: '/blood-banks' },
 ];
 
 const services = [
-	{ label: 'Home', to: '/' },
+	{ label: 'Emergency Request', to: '/emergency-request' },
+	{ label: 'Create Request', to: '/request-blood' },
+	{ label: 'Login', to: '/login' },
+	{ label: 'Register', to: '/register' },
 ];
 
 function App() {
@@ -153,13 +109,13 @@ function App() {
 			<Route path="/find-donor" element={<FindDonorPage />} />
 			<Route path="/donor/:id" element={<DonorProfilePage />} />
 			<Route path="/request-blood" element={<CreateBloodRequestPage />} />
-			<Route path="/blood-banks" element={<PlaceholderPage title="Blood Banks" />} />
+			<Route path="/blood-banks" element={<BloodBanksPage />} />
 			<Route path="/blood-banks/:id" element={<BloodBankDetailsPage />} />
 			<Route path="/about" element={<PlaceholderPage title="About" />} />
 			<Route path="/contact" element={<PlaceholderPage title="Contact" />} />
 			<Route path="/login" element={<LoginPage />} />
-			<Route path="/register" element={<PlaceholderPage title="Register" />} />
-			<Route path="/forgot-password" element={<PlaceholderPage title="Forgot Password" />} />
+			<Route path="/register" element={<RegisterPage />} />
+			<Route path="/forgot-password" element={<PlaceholderPage title="Forgot Password" message="Password reset is not yet configured. Please contact support or sign in with your existing credentials." />} />
 			<Route path="/dashboard" element={<DashboardPage />} />
 			<Route path="/emergency-request" element={<EmergencyRequestPage />} />
 			<Route path="/request-tracking/:id" element={<RequestTrackingPage />} />
@@ -663,7 +619,7 @@ function LandingPage() {
 	);
 }
 
-function PlaceholderPage({ title }) {
+function PlaceholderPage({ title, message }) {
 	return (
 		<div className="min-h-screen bg-blood-radial px-4 py-16 text-slate-100 sm:px-6 lg:px-8">
 			<div className="section-shell flex min-h-[70vh] items-center justify-center">
@@ -673,15 +629,15 @@ function PlaceholderPage({ title }) {
 					</div>
 					<h1 className="mt-6 text-3xl font-semibold tracking-tight text-white sm:text-4xl">{title}</h1>
 					<p className="mt-4 text-base leading-7 text-slate-300">
-						This route is available as a safe placeholder while the dedicated page is built.
+						{message || 'This page is not yet available. Please use the main application workflows from the dashboard or home page.'}
 					</p>
-					<div className="mt-8">
-						<Link
-							to="/"
-							className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-rose-100"
-						>
+					<div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+						<Link to="/" className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-rose-100">
 							Back to Home
 							<ArrowRight className="h-4 w-4" aria-hidden="true" />
+						</Link>
+						<Link to="/dashboard" className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
+							Go to Dashboard
 						</Link>
 					</div>
 				</div>

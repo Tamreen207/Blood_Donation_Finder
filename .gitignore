@@ -36,3 +36,14 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Test/build artifacts
+frontend/dist/

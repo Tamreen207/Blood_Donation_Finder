@@ -1,44 +1,56 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '');
 
-function normalizeBaseUrl(baseUrl) {
-	return baseUrl.replace(/\/$/, '');
+function authHeader() {
+	try {
+		const token = localStorage.getItem('lifelink_token');
+		return token ? { Authorization: `Bearer ${token}` } : {};
+	} catch (_) { return {}; }
 }
 
-async function fetchJson(path, fallbackData) {
-	const baseUrl = normalizeBaseUrl(API_BASE_URL);
-	if (!baseUrl) {
+async function fetchJson(path, fallbackData = null) {
+	if (!API_BASE_URL) return fallbackData;
+	try {
+		const response = await fetch(`${API_BASE_URL}${path}`, {
+			headers: { 'Content-Type': 'application/json', ...authHeader() },
+		});
+		if (!response.ok) return fallbackData;
+		const text = await response.text();
+		return text ? JSON.parse(text) : fallbackData;
+	} catch (_) {
 		return fallbackData;
 	}
-
-	const response = await fetch(`${baseUrl}${path}`, {
-		headers: {
-			'Content-Type': 'application/json',
-		},
-	});
-
-	if (!response.ok) {
-		throw new Error(`Request failed for ${path}`);
-	}
-
-	return response.json();
 }
 
 export async function fetchDashboardProfile() {
-	return fetchJson('/api/users/profile', null);
+	const me = await fetchJson('/api/auth/me', null);
+	if (me?.data?.user || me?.user) return me;
+	try {
+		const raw = localStorage.getItem('lifelink_user');
+		return raw ? { data: { user: JSON.parse(raw) } } : null;
+	} catch (_) { return null; }
 }
 
 export async function fetchMyRequests() {
-	return fetchJson('/api/blood-requests/my-requests', []);
+	const res = await fetchJson('/api/requests', { success: true, data: [] });
+	const items = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : [];
+	return { success: true, data: items };
 }
 
 export async function fetchMyDonationHistory() {
-	return fetchJson('/api/donations/my-history', []);
+	const res = await fetchJson('/api/donations', { success: true, data: [] });
+	const items = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : [];
+	return { success: true, data: items };
 }
 
 export async function fetchNotifications() {
-	return fetchJson('/api/notifications', []);
+	const res = await fetchJson('/api/notifications', { success: true, data: { items: [] } });
+	const data = res?.data || res || {};
+	const items = Array.isArray(data.items) ? data.items : Array.isArray(data) ? data : [];
+	return { success: true, data: items };
 }
 
 export async function fetchNearbyBloodBanks() {
-	return fetchJson('/api/blood-banks/nearby', []);
+	const res = await fetchJson('/api/blood-banks', { success: true, data: [] });
+	const items = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : [];
+	return { success: true, data: items };
 }

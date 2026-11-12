@@ -1,6 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 import { connectDB } from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import donorRoutes from './routes/donorRoutes.js';
@@ -15,6 +18,9 @@ import publicRoutes from './routes/publicRoutes.js';
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -39,18 +45,41 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/matching', matchingRoutes);
 app.use('/api/donations', donationRoutes);
 
-app.use(notFound);
+// Serve frontend build in production/single-command mode
+const distPath = path.resolve(__dirname, '../frontend/dist');
+if (fs.existsSync(distPath)) {
+	app.use(express.static(distPath));
+	// API 404 must stay JSON
+	app.use('/api', notFound);
+	app.get(/^(?!\/api).*/, (_req, res) => {
+		res.sendFile(path.join(distPath, 'index.html'));
+	});
+} else {
+	app.use(notFound);
+}
+
 app.use(errorHandler);
 
 async function start() {
-	await connectDB();
-	app.listen(PORT, () => {
+	const skipDb = process.env.SKIP_DB === '1' || process.env.SKIP_DB === 'true' || process.env.NODE_ENV === 'test';
+	if (!skipDb) {
+		await connectDB();
+	} else {
+		console.log('[api] SKIP_DB/test: starting without database connection');
+	}
+	const server = app.listen(PORT, () => {
 		console.log(`[api] LifeLink server listening on port ${PORT}`);
 		console.log(`[api] CORS origin: ${CLIENT_ORIGIN}`);
+		if (fs.existsSync(distPath)) console.log(`[api] Serving frontend from ${distPath}`);
+	});
+	return server;
+}
+
+if (process.env.NODE_ENV !== 'test' && process.env.SKIP_DB !== '1') {
+	start().catch((err) => {
+		console.error('[api] failed to start:', err);
+		process.exit(1);
 	});
 }
 
-start().catch((err) => {
-	console.error('[api] failed to start:', err);
-	process.exit(1);
-});
+export { app, start };

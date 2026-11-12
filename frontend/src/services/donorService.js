@@ -1,70 +1,89 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '');
 
-function normalizeBaseUrl(baseUrl) {
-	return baseUrl.replace(/\/$/, '');
+function authHeader() {
+	try {
+		const token = localStorage.getItem('lifelink_token');
+		return token ? { Authorization: `Bearer ${token}` } : {};
+	} catch (_) { return {}; }
 }
 
-function createRequestError(message, code, status) {
-	const error = new Error(message);
-	if (code) {
-		error.code = code;
+async function fetchJson(path, query = {}, { auth = false, fallback = null } = {}) {
+	if (!API_BASE_URL) return fallback;
+	const params = new URLSearchParams();
+	Object.entries(query).forEach(([k, v]) => {
+		if (v !== undefined && v !== null && v !== '') params.set(k, String(v));
+	});
+	const qs = params.toString();
+	const res = await fetch(`${API_BASE_URL}${path}${qs ? `?${qs}` : ''}`, {
+		headers: { 'Content-Type': 'application/json', ...(auth ? authHeader() : {}) },
+	});
+	if (!res.ok) {
+		if (fallback !== null) return fallback;
+		const err = new Error(`Request failed (${res.status})`);
+		err.status = res.status;
+		throw err;
 	}
-	if (status) {
-		error.status = status;
-	}
-	return error;
+	return res.json();
 }
 
-async function fetchJson(path, query = {}, fallbackData = null) {
-	const baseUrl = normalizeBaseUrl(API_BASE_URL);
-	if (!baseUrl) {
-		return fallbackData;
-	}
-
-	const searchParams = new URLSearchParams();
-	Object.entries(query).forEach(([key, value]) => {
-		if (value !== undefined && value !== null && value !== '') {
-			searchParams.set(key, String(value));
-		}
-	});
-
-	const response = await fetch(`${baseUrl}${path}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`, {
-		headers: {
-			'Content-Type': 'application/json',
-		},
-	});
-
-	if (response.status === 404) {
-		throw createRequestError(`Resource not found for ${path}`, 'NOT_FOUND', 404);
-	}
-
-	if (!response.ok) {
-		throw createRequestError(`Request failed for ${path}`, 'REQUEST_FAILED', response.status);
-	}
-
-	return response.json();
+function normalizeDonor(d) {
+	if (!d) return null;
+	const u = d.user || {};
+	return {
+		...d,
+		id: d.id || d._id,
+		_id: d._id || d.id,
+		userId: d.userId,
+		displayName: d.displayName || u.name?.split(' ')[0] || u.name || 'Donor',
+		name: u.name || d.displayName || 'Donor',
+		bloodGroup: d.bloodGroup,
+		verified: Boolean(d.verified ?? d.isVerified),
+		isAvailable: Boolean(d.available ?? d.isAvailable),
+		availability: (d.available ?? d.isAvailable) ? 'Available Now' : 'Unavailable',
+		distanceKm: d.distanceKm ?? d.distance ?? null,
+		distance: d.distanceKm ?? d.distance ?? null,
+		city: d.city || '',
+		area: d.area || d.location || d.city || '',
+		location: d.location || d.area || d.city || '',
+		phone: d.phone || u.phone || '',
+		lastDonation: d.lastDonation,
+		lastDonationDate: d.lastDonation,
+		contactAllowed: true,
+	};
 }
 
 export function isDonorApiConfigured() {
-	return Boolean(normalizeBaseUrl(API_BASE_URL));
+	return Boolean(API_BASE_URL);
 }
 
-export async function searchDonors(params) {
-	return fetchJson('/api/donors/search', params, null);
+export async function searchDonors(params = {}) {
+	const query = {
+		bloodGroup: params.bloodGroup,
+		latitude: params.latitude,
+		longitude: params.longitude,
+		radiusKm: params.radiusKm || (params.radius ? parseInt(String(params.radius), 10) : undefined),
+		urgency: params.urgency,
+	};
+	// try auth endpoint first, fall back to public
+	let res = await fetchJson('/api/donors', query, { auth: true, fallback: null });
+	if (!res) res = await fetchJson('/api/public/donors', query, { auth: false, fallback: { success: true, data: [] } });
+	const list = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : [];
+	return { success: true, results: list.map(normalizeDonor).filter(Boolean) };
 }
 
-export async function fetchNearbyDonors(params) {
-	return fetchJson('/api/donors/nearby', params, []);
+export async function fetchNearbyDonors(params = {}) {
+	const res = await searchDonors(params);
+	return { success: true, results: res.results || [] };
 }
 
 export async function fetchDonorDetails(id) {
-	return fetchJson(`/api/donors/${encodeURIComponent(id)}`, {}, null);
+	if (!API_BASE_URL) return null;
+	try {
+		const res = await fetchJson(`/api/donors/${encodeURIComponent(id)}`, {}, { auth: true, fallback: null });
+		const d = res?.data || res;
+		return d ? { success: true, data: normalizeDonor(d) } : null;
+	} catch (_) { return null; }
 }
 
-export async function fetchDonorActivity(id) {
-	return fetchJson(`/api/donors/${encodeURIComponent(id)}/activity`, {}, null);
-}
-
-export async function fetchDonorAvailability(id) {
-	return fetchJson(`/api/donors/${encodeURIComponent(id)}/availability`, {}, null);
-}
+export async function fetchDonorActivity() { return { success: true, data: [] }; }
+export async function fetchDonorAvailability() { return { success: true, data: null }; }

@@ -73,20 +73,41 @@ export async function submitBloodRequest(payload) {
 		throw buildRequestError('Blood request API is not configured yet.', 'NOT_CONFIGURED');
 	}
 
-	const response = await fetch(`${baseUrl}/api/blood-requests`, {
+	let token = null;
+	try { token = localStorage.getItem('lifelink_token'); } catch (_) {}
+	const headers = { 'Content-Type': 'application/json' };
+	if (token) headers.Authorization = `Bearer ${token}`;
+
+	const body = {
+		patientName: payload.patientName || payload.patient?.name || 'Patient',
+		bloodGroup: payload.bloodGroup,
+		unitsRequired: Number(payload.unitsRequired || payload.units) || 1,
+		hospitalName: payload.hospitalName || payload.hospital?.name || 'Hospital',
+		hospitalAddress: payload.hospitalAddress || payload.hospitalLocation || payload.hospital?.location || '',
+		city: payload.city || payload.location?.city || '',
+		latitude: payload.latitude ?? payload.location?.latitude,
+		longitude: payload.longitude ?? payload.location?.longitude,
+		urgency: String(payload.urgency || 'MEDIUM').toUpperCase() === 'EMERGENCY' ? 'CRITICAL' : String(payload.urgency || 'MEDIUM').toUpperCase(),
+		contactPhone: payload.contactPhone || payload.contact?.phone || '',
+		message: payload.message || payload.additionalMessage || '',
+	};
+
+	const response = await fetch(`${baseUrl}/api/requests`, {
 		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify(payload),
+		headers,
+		body: JSON.stringify(body),
 	});
 
+	if (response.status === 401) {
+		throw buildRequestError('Please log in to submit a blood request.', 'UNAUTHORIZED', 401);
+	}
 	if (response.status === 404) {
 		throw buildRequestError('Blood request API endpoint was not found.', 'NOT_FOUND', 404);
 	}
-
 	if (!response.ok) {
-		throw buildRequestError('Unable to submit blood request.', 'REQUEST_FAILED', response.status);
+		let msg = 'Unable to submit blood request.';
+		try { const j = await response.json(); if (j?.message) msg = j.message; } catch (_) {}
+		throw buildRequestError(msg, 'REQUEST_FAILED', response.status);
 	}
 
 	return response.status === 204 ? null : response.json();

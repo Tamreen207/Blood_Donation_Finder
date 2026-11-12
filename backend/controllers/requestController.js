@@ -74,6 +74,12 @@ export const listRequests = asyncHandler(async (req, res) => {
 export const getRequest = asyncHandler(async (req, res) => {
 	const request = await BloodRequest.findById(req.params.id);
 	if (!request) throw new ApiError(404, 'Request not found');
+	const isOwner = String(request.requesterId) === String(req.user._id);
+	const isAdmin = req.user.role === 'admin';
+	if (!isOwner && !isAdmin) {
+		// allow notified donors/banks to view limited info? for now restrict
+		throw new ApiError(403, 'Not allowed to view this request');
+	}
 	res.json({ success: true, data: request });
 });
 
@@ -219,13 +225,16 @@ export const bankRequestsSummary = asyncHandler(async (req, res) => {
 export const getRequestActivity = asyncHandler(async (req, res) => {
 	const request = await BloodRequest.findById(req.params.id);
 	if (!request) throw new ApiError(404, 'Request not found');
+	const isOwner = String(request.requesterId) === String(req.user._id);
+	const isAdmin = req.user.role === 'admin';
+	if (!isOwner && !isAdmin) throw new ApiError(403, 'Not allowed');
 	const events = [];
 	events.push({ type: 'REQUEST_CREATED', label: 'Request created', at: request.createdAt });
-	if (request.notifiedBloodBanks?.length) {
-		events.push({ type: 'REQUEST_RECEIVED', label: 'Request received by blood bank', at: request.createdAt });
+	if (request.notifiedBloodBanks?.length || request.notifiedDonors?.length) {
+		events.push({ type: 'MATCHING_STARTED', label: 'Matching started with nearby donors and blood banks', at: request.createdAt });
 	}
 	if (['ACCEPTED', 'PARTIALLY_FULFILLED', 'FULFILLED'].includes(request.status)) {
-		events.push({ type: 'REQUEST_ACCEPTED', label: 'Request accepted', at: request.updatedAt });
+		events.push({ type: 'REQUEST_ACCEPTED', label: 'Response received', at: request.updatedAt });
 	}
 	if (request.status === 'PARTIALLY_FULFILLED') {
 		events.push({ type: 'PARTIAL_FULFILLMENT', label: 'Partial fulfillment recorded', at: request.updatedAt });
@@ -234,7 +243,7 @@ export const getRequestActivity = asyncHandler(async (req, res) => {
 		events.push({ type: 'REQUEST_FULFILLED', label: 'Request fulfilled', at: request.updatedAt });
 	}
 	if (request.status === 'CANCELLED') {
-		events.push({ type: 'REQUEST_DECLINED', label: 'Request declined / cancelled', at: request.updatedAt });
+		events.push({ type: 'REQUEST_CANCELLED', label: 'Request cancelled', at: request.updatedAt });
 	}
 	events.sort((a, b) => new Date(a.at) - new Date(b.at));
 	res.json({ success: true, data: { events } });

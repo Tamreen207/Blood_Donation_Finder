@@ -1,41 +1,26 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
-
-function normalizeBaseUrl(baseUrl) {
-	return baseUrl.replace(/\/$/, '');
-}
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '');
 
 function getAuthHeaders() {
 	const headers = { 'Content-Type': 'application/json' };
 	try {
 		const token = localStorage.getItem('lifelink_token');
-		if (token) headers['Authorization'] = `Bearer ${token}`;
+		if (token) headers.Authorization = `Bearer ${token}`;
 	} catch (_) {}
 	return headers;
 }
 
-async function fetchJson(path, query = {}, fallbackData = null) {
-	const baseUrl = normalizeBaseUrl(API_BASE_URL);
-	if (!baseUrl) {
-		return fallbackData;
-	}
-
+async function fetchJson(path, query = {}, { auth = false } = {}) {
+	if (!API_BASE_URL) return null;
 	const searchParams = new URLSearchParams();
 	Object.entries(query).forEach(([key, value]) => {
-		if (value !== undefined && value !== null && value !== '') {
-			searchParams.set(key, String(value));
-		}
+		if (value !== undefined && value !== null && value !== '') searchParams.set(key, String(value));
 	});
-
 	const queryString = searchParams.toString();
-	const response = await fetch(`${baseUrl}${path}${queryString ? `?${queryString}` : ''}`, {
-		headers: getAuthHeaders(),
+	const response = await fetch(`${API_BASE_URL}${path}${queryString ? `?${queryString}` : ''}`, {
+		headers: auth ? getAuthHeaders() : { 'Content-Type': 'application/json' },
 		cache: 'no-store',
 	});
-
-	if (!response.ok) {
-		throw new Error(`Request failed for ${path}`);
-	}
-
+	if (!response.ok) throw new Error(`Request failed for ${path}`);
 	return response.json();
 }
 
@@ -46,107 +31,91 @@ function normalizeRadius(r) {
 	return m ? parseInt(m[1], 10) : 25;
 }
 
-export async function searchBloodAvailability(params) {
-	try {
-		// Try blood-banks list first (works without auth) with coordinates
-		const lat = params?.latitude;
-		const lng = params?.longitude;
-		if (lat != null && lng != null) {
-			const data = await fetchJson('/api/blood-banks/nearby', {
-				latitude: lat,
-				longitude: lng,
-				bloodGroup: params?.bloodGroup,
-				radiusKm: normalizeRadius(params?.radius),
-			}, null);
-			if (Array.isArray(data?.data) && data.data.length > 0) {
-				return {
-					results: data.data.map((b) => ({
-						id: b._id || b.id,
-						name: b.name,
-						address: b.address || b.city || '',
-						distance: b.distance != null ? `${typeof b.distance === 'number' ? b.distance.toFixed(1) : b.distance} km` : '—',
-						distanceLabel: b.distance != null ? `${typeof b.distance === 'number' ? b.distance.toFixed(1) : b.distance} km` : undefined,
-						phone: b.phone || '',
-						status: b.isActive ? 'Open' : 'Closed',
-						updated: 'Recently',
-						isDemo: false,
-						source: 'live',
-						availability: (b.inventory || []).reduce((acc, inv) => {
-							acc[inv.bloodGroup] = { label: inv.unitsAvailable > 0 ? (inv.unitsAvailable < 3 ? 'Low Stock' : 'Available') : 'Not Available', units: inv.unitsAvailable };
-							return acc;
-						}, {}) || {},
-					})),
-				};
-			}
-		}
-		// Fallback to /api/blood-banks list
-		const list = await fetchJson('/api/blood-banks', {}, null);
-		if (Array.isArray(list?.data) && list.data.length > 0) {
-			return {
-				results: list.data.slice(0, 20).map((b) => ({
-					id: b._id || b.id,
-					name: b.name,
-					address: b.address || b.city || '',
-					distance: '—',
-					distanceLabel: undefined,
-					phone: b.phone || '',
-					status: b.isActive ? 'Open' : 'Closed',
-					updated: 'Recently',
-					isDemo: false,
-					source: 'live',
-					availability: (b.inventory || []).reduce((acc, inv) => {
-						acc[inv.bloodGroup] = { label: inv.unitsAvailable > 0 ? (inv.unitsAvailable < 3 ? 'Low Stock' : 'Available') : 'Not Available', units: inv.unitsAvailable };
-						return acc;
-					}, {}) || {},
-				})),
-			};
-		}
-		return null;
-	} catch (_) {
-		return null;
-	}
+function inventoryToAvailability(inventory = []) {
+	const map = {};
+	(inventory || []).forEach((inv) => {
+		const units = Number(inv.unitsAvailable ?? inv.units ?? 0);
+		map[inv.bloodGroup] = {
+			label: units > 0 ? (units < 3 ? 'Low Stock' : 'Available') : 'Not Available',
+			units,
+		};
+	});
+	return map;
 }
 
-export async function fetchNearbyBloodBanks(params) {
-	try {
-		const lat = params?.latitude;
-		const lng = params?.longitude;
-		const radiusKm = normalizeRadius(params?.radius) || 1000;
-		if (lat != null && lng != null) {
-			const data = await fetchJson('/api/blood-banks/nearby', {
-				latitude: lat,
-				longitude: lng,
-				bloodGroup: params?.bloodGroup,
-				radiusKm,
-			}, []);
-			if (Array.isArray(data?.data) && data.data.length > 0) return data.data.map((b) => ({ ...b, source: 'live', isDemo: false }));
-			if (Array.isArray(data) && data.length > 0) return data.map((b) => ({ ...b, source: 'live', isDemo: false }));
-		}
-		const list = await fetchJson('/api/blood-banks', {}, []);
-		if (Array.isArray(list?.data)) return list.data.map((b) => ({ ...b, source: 'live', isDemo: false }));
-		if (Array.isArray(list)) return list.map((b) => ({ ...b, source: 'live', isDemo: false }));
-		return [];
-	} catch (_) {
-		return [];
-	}
+function mapBank(b) {
+	const distanceNum = b.distance != null ? Number(b.distance) : null;
+	return {
+		id: b._id || b.id,
+		name: b.name,
+		address: b.address || '',
+		city: b.city || '',
+		distance: distanceNum != null ? `${distanceNum.toFixed(1)} km` : '—',
+		distanceLabel: distanceNum != null ? `${distanceNum.toFixed(1)} km` : undefined,
+		distanceKm: distanceNum,
+		phone: b.phone || b.emergencyPhone || '',
+		status: b.isActive === false ? 'Closed' : 'Open',
+		verified: Boolean(b.isVerified || b.verification?.status === 'VERIFIED'),
+		updated: b.updatedAt ? new Date(b.updatedAt).toLocaleString() : 'Recently',
+		lastUpdated: b.updatedAt || null,
+		isDemo: false,
+		source: 'live',
+		availability: inventoryToAvailability(b.inventory),
+		inventory: b.inventory || [],
+	};
 }
 
-export async function fetchNearbyDonors(params) {
+export async function searchBloodAvailability(params = {}) {
+	const lat = params?.latitude;
+	const lng = params?.longitude;
+	const radiusKm = normalizeRadius(params?.radius);
+	let banks = [];
+	if (lat != null && lng != null) {
+		const data = await fetchJson('/api/blood-banks/nearby', { latitude: lat, longitude: lng, bloodGroup: params?.bloodGroup, radiusKm }, { auth: false }).catch(() => null);
+		if (Array.isArray(data?.data)) banks = data.data;
+		else if (Array.isArray(data)) banks = data;
+	}
+	if (!banks.length) {
+		const list = await fetchJson('/api/blood-banks', {}, { auth: false }).catch(() => null);
+		if (Array.isArray(list?.data)) banks = list.data;
+		else if (Array.isArray(list)) banks = list;
+	}
+	return { results: (banks || []).map(mapBank) };
+}
+
+export async function fetchNearbyBloodBanks(params = {}) {
+	const res = await searchBloodAvailability(params);
+	return res.results || [];
+}
+
+export async function fetchNearbyDonors(params = {}) {
+	if (!API_BASE_URL) return [];
+	const radiusKm = normalizeRadius(params?.radius);
 	try {
-		const data = await fetchJson('/api/donors/nearby', {
+		const data = await fetchJson('/api/public/donors', {
+			bloodGroup: params?.bloodGroup,
 			latitude: params?.latitude,
 			longitude: params?.longitude,
-			bloodGroup: params?.bloodGroup,
-			radiusKm: normalizeRadius(params?.radius),
-		}, []);
-		if (Array.isArray(data?.data)) return data.data;
-		if (Array.isArray(data)) return data;
-		return [];
+			radiusKm,
+		}, { auth: false });
+		const list = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : [];
+		return list.map((d) => ({
+			...d,
+			id: d.id || d._id,
+			name: d.displayName || d.name || 'Donor',
+			displayName: d.displayName || d.name || 'Donor',
+			bloodGroup: d.bloodGroup,
+			distance: d.distanceKm ?? d.distance,
+			distanceKm: d.distanceKm ?? d.distance,
+			verified: Boolean(d.verified ?? d.isVerified),
+			availability: (d.available ?? d.isAvailable) ? 'Available' : 'Unavailable',
+			isDemo: false,
+		}));
 	} catch (_) {
 		return [];
 	}
 }
 
-export async function fetchBloodInventoryAvailability(params) {
+export async function fetchBloodInventoryAvailability() {
 	return [];
 }

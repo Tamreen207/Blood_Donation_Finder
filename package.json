@@ -1,0 +1,24 @@
+{
+  "name": "blood-donation-finder",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "LifeLink - Blood Donation and Blood Bank Finder",
+  "scripts": {
+    "start": "npm run build --prefix frontend && npm run start --prefix backend",
+    "dev": "sh -c 'npm run dev --prefix backend & npm run dev --prefix frontend & wait'",
+    "build": "npm run build --prefix frontend",
+    "start:backend": "npm run start --prefix backend",
+    "start:frontend": "npm run preview --prefix frontend",
+    "seed": "npm run seed --prefix backend",
+    "test": "npm run test:unit && npm run test:integration && npm run test:system && npm run test:whitebox && npm run test:blackbox",
+    "test:backend": "node --test backend/tests/**/*.test.js",
+    "test:frontend": "node --test frontend/tests/**/*.test.js",
+    "test:unit": "node --test backend/tests/unit/*.test.js frontend/tests/unit/*.test.js",
+    "test:integration": "node --test backend/tests/integration/*.test.js frontend/tests/integration/*.test.js",
+    "test:system": "node --test tests/system/*.test.js",
+    "test:whitebox": "node --test tests/whitebox/*.test.js",
+    "test:blackbox": "node --test tests/blackbox/*.test.js",
+    "test:all": "npm run test"
+  }
+}
