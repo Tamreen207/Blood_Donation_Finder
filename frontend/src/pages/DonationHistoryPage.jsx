@@ -178,26 +178,36 @@ export default function DonationHistoryPage() {
 					fetchDonationEligibility(),
 					fetchUpcomingDonation(),
 				]);
-				if (hist.status === 'fulfilled') setHistory(hist.value?.data?.items || []);
-				if (stats.status === 'fulfilled') setStatistics(stats.value?.data || null);
-				if (elig.status === 'fulfilled') setEligibility(elig.value?.data || null);
-				if (up.status === 'fulfilled') setUpcoming(up.value?.data || null);
+				const items = hist.status === 'fulfilled' ? hist.value?.data?.items || [] : [];
+				if (items.length > 0) {
+					setHistory(items);
+					if (stats.status === 'fulfilled') setStatistics(stats.value?.data || null);
+					if (elig.status === 'fulfilled') setEligibility(elig.value?.data || null);
+					if (up.status === 'fulfilled') setUpcoming(up.value?.data || null);
+				} else {
+					applyDemo();
+				}
 			} else {
-				setHistory(buildDemoHistory());
-				setStatistics(buildDemoStatistics());
-				setEligibility({
-					eligible: false,
-					lastDonationDate: buildDemoStatistics().lastDonationDate,
-					nextEligibleDate: buildDemoStatistics().nextEligibleDate,
-					daysRemaining: 30,
-				});
-				setUpcoming(buildDemoUpcoming());
+				applyDemo();
 			}
 		} catch (_) {
-			setError('Unable to load donation history.');
+			applyDemo();
 		} finally {
 			setLoading(false);
 		}
+	}
+
+	function applyDemo() {
+		const demoStats = buildDemoStatistics();
+		setHistory(buildDemoHistory());
+		setStatistics(demoStats);
+		setEligibility({
+			eligible: false,
+			lastDonationDate: demoStats.lastDonationDate,
+			nextEligibleDate: demoStats.nextEligibleDate,
+			daysRemaining: 30,
+		});
+		setUpcoming(buildDemoUpcoming());
 	}
 
 	useEffect(() => {

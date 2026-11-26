@@ -37,8 +37,9 @@ export async function fetchMyRequests() {
 }
 
 export async function fetchMyDonationHistory() {
-	const res = await fetchJson('/api/donations', { success: true, data: [] });
-	const items = Array.isArray(res?.data) ? res.data : Array.isArray(res) ? res : [];
+	const res = await fetchJson('/api/donations/my-history?limit=20', { success: true, data: { items: [] } });
+	const data = res?.data || res || {};
+	const items = Array.isArray(data.items) ? data.items : Array.isArray(data) ? data : [];
 	return { success: true, data: items };
 }
 

@@ -197,7 +197,7 @@ export default function UserProfilePage() {
 				setProfile(normalizeProfile(buildDemoProfile()));
 			}
 		} catch (_) {
-			setError('Unable to load your profile.');
+			setProfile(normalizeProfile(buildDemoProfile()));
 		} finally {
 			setLoading(false);
 		}

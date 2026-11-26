@@ -179,27 +179,60 @@ async function seed() {
 	}
 
 	console.log('[seed] creating donations...');
-	const completedDonors = donorProfiles.filter((d) => d.donor.totalDonations > 0);
-	for (const { donor, city } of completedDonors) {
+	const donationTypes = ['WHOLE_BLOOD', 'PLASMA', 'PLATELETS', 'WHOLE_BLOOD'];
+	for (const { donor, city, user } of donorProfiles) {
 		const bank = bloodBankProfiles.find((b) => b.city.name === city.name) || bloodBankProfiles[0];
-		await Donation.create({
-			donorId: donor._id,
-			donorUserId: donor.userId,
-			bloodBankId: bank.bank._id,
-			bloodGroup: donor.bloodGroup,
-			units: 1,
-			donationDate: new Date(Date.now() - Math.floor(Math.random() * 365) * 24 * 60 * 60 * 1000),
-		});
+		// Every donor gets a realistic history (3-6 completed donations).
+		const baseOffset = 45 + (donor.totalDonations % 5) * 3;
+		const count = 3 + (donor.totalDonations % 4);
+		for (let k = 0; k < count; k += 1) {
+			const offsetDays = baseOffset + k * 75;
+			const donationDate = new Date(Date.now() - offsetDays * 24 * 60 * 60 * 1000);
+			await Donation.create({
+				donorId: donor._id,
+				donorUserId: donor.userId,
+				bloodBankId: bank.bank._id,
+				bloodGroup: donor.bloodGroup,
+				donationType: donationTypes[(k + donor.totalDonations) % donationTypes.length],
+				units: 1,
+				donationDate,
+				status: 'COLLECTED',
+				completedAt: donationDate,
+				screeningStatus: 'PASSED',
+			});
+		}
+		donor.totalDonations = count;
+		donor.lastDonationDate = new Date(Date.now() - baseOffset * 24 * 60 * 60 * 1000);
+		await donor.save();
 	}
 
 	console.log('[seed] creating notifications...');
-	for (const { user, donor } of donorProfiles.slice(0, 8)) {
-		await Notification.create({
-			userId: user._id,
-			type: 'SYSTEM',
-			title: 'Welcome to LifeLink',
-			message: 'Thank you for being a registered donor. Keep your availability updated.',
-		});
+	const notifTemplates = [
+		{ type: 'SYSTEM', title: 'Welcome to LifeLink', message: 'Thank you for being a registered donor. Keep your availability updated.' },
+		{ type: 'ACCOUNT_VERIFIED', title: 'Profile verified', message: 'Your donor profile has been verified by the LifeLink team.', isRead: true },
+		{ type: 'SYSTEM', title: 'Donation reminder', message: 'You have an upcoming donation. Please stay hydrated and eat well.' },
+		{ type: 'NEW_REQUEST', title: 'Blood match found', message: 'A compatible recipient may need your blood group nearby.' },
+		{ type: 'REQUEST_COMPLETED', title: 'Donation recorded', message: 'Your donation history has been updated. Thank you for saving lives.' },
+		{ type: 'REQUEST_ACCEPTED', title: 'Request accepted', message: 'A blood bank accepted a nearby request. Your help is appreciated.', isRead: true },
+	];
+	for (const { user, donor } of donorProfiles) {
+		for (let t = 0; t < notifTemplates.length; t += 1) {
+			const tpl = notifTemplates[t];
+			await Notification.create({
+				userId: user._id,
+				type: tpl.type,
+				title: tpl.title,
+				message: tpl.message,
+				isRead: Boolean(tpl.isRead),
+				createdAt: new Date(Date.now() - (t + 1) * 6 * 60 * 60 * 1000),
+			});
+		}
+	}
+
+	console.log('[seed] creating seeker notifications...');
+	for (const { user } of seekers) {
+		await Notification.create({ userId: user._id, type: 'NEW_REQUEST', title: 'New blood request', message: 'A patient near you needs blood. Check matching donors.', isRead: false });
+		await Notification.create({ userId: user._id, type: 'REQUEST_ACCEPTED', title: 'Request accepted', message: 'A blood bank responded to your request.', isRead: true });
 	}
 
 	console.log('\n[seed] ===== Demo accounts (password for all: password123) =====');

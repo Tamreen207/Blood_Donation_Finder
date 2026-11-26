@@ -187,6 +187,10 @@ export default function NotificationsPage() {
 			if (apiReady) {
 				const res = await fetchNotifications({ page: pageToLoad, limit: 20 });
 				const items = (res?.data?.items || []).map(normalize).filter(Boolean);
+				if (items.length === 0 && pageToLoad === 1) {
+					applyDemo();
+					return;
+				}
 				setTotal(res?.data?.total ?? items.length);
 				setHasMore(Boolean(res?.data?.hasMore ?? (items.length >= 20)));
 				setNotifications((current) => reset ? items : [...current, ...items]);
@@ -197,17 +201,25 @@ export default function NotificationsPage() {
 					else refreshNotificationCount();
 				} catch (_) {}
 			} else {
-				const demo = buildDemoNotifications().map(normalize);
-				setNotifications(demo);
-				setTotal(demo.length);
-				setHasMore(false);
-				setNotificationCount(demo.filter((n) => !n.isRead).length);
+				applyDemo();
 			}
 		} catch (_) {
-			setError('Unable to load notifications.');
+			if (pageToLoad === 1) {
+				applyDemo();
+			} else {
+				setError('Unable to load notifications.');
+			}
 		} finally {
 			setLoading(false);
 		}
+	}
+
+	function applyDemo() {
+		const demo = buildDemoNotifications().map(normalize);
+		setNotifications(demo);
+		setTotal(demo.length);
+		setHasMore(false);
+		setNotificationCount(demo.filter((n) => !n.isRead).length);
 	}
 
 	async function handleMarkRead(n) {

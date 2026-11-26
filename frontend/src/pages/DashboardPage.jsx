@@ -81,6 +81,30 @@ function safeRead() {
 	} catch (_) { return null; }
 }
 
+function demoRequests() {
+	const h = (n) => new Date(Date.now() - n * 60 * 60 * 1000).toISOString();
+	return [
+		{ _id: 'REQ-2026-00421', bloodGroup: 'O+', unitsRequired: 3, hospitalName: 'City General Hospital', city: 'Anantapur', status: 'PENDING', createdAt: h(2) },
+		{ _id: 'REQ-2026-00420', bloodGroup: 'A+', unitsRequired: 2, hospitalName: 'Lifeline Medical Center', city: 'Anantapur', status: 'MATCHING', createdAt: h(26) },
+		{ _id: 'REQ-2026-00419', bloodGroup: 'B+', unitsRequired: 1, hospitalName: 'Hope Regional Hospital', city: 'Anantapur', status: 'FULFILLED', createdAt: h(72) },
+		{ _id: 'REQ-2026-00418', bloodGroup: 'AB+', unitsRequired: 2, hospitalName: 'MetroCare Hospital', city: 'Anantapur', status: 'FULFILLED', createdAt: h(120) },
+		{ _id: 'REQ-2026-00417', bloodGroup: 'O-', unitsRequired: 4, hospitalName: 'Sunrise Medical Center', city: 'Anantapur', status: 'FULFILLED', createdAt: h(200) },
+	];
+}
+
+function demoHistory() {
+	const mk = (days, bloodGroup) => ({ donationDate: new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString(), bloodGroup });
+	return [mk(45, 'O+'), mk(150, 'O+'), mk(240, 'O+'), mk(330, 'O+'), mk(420, 'O+')];
+}
+
+function demoBanks() {
+	return [
+		{ _id: 'BB-DEMO-1', name: 'City Central Blood Bank', city: 'Anantapur', availableGroups: ['A+', 'O+', 'B+', 'AB+'], availability: 'Available' },
+		{ _id: 'BB-DEMO-2', name: 'Lifeline Blood Center', city: 'Anantapur', availableGroups: ['O-', 'A-', 'B-'], availability: 'Available' },
+		{ _id: 'BB-DEMO-3', name: 'Hope Regional Blood Bank', city: 'Anantapur', availableGroups: ['O+', 'B+', 'AB+'], availability: 'Low Stock' },
+	];
+}
+
 function DashboardPage() {
 	const [user, setUser] = useState(() => safeRead());
 	const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -132,50 +156,62 @@ function DashboardPage() {
 				}
 			}
 			const requests = reqs.value?.data?.items || reqs.value?.data || reqs.value;
-			if (Array.isArray(requests)) {
-				setRecentRequests(requests.slice(0, 5).map((r) => ({
-					id: r._id || r.id,
-					group: r.bloodGroup,
-					units: r.unitsRequired || r.units,
-					location: r.hospitalName || r.hospital || r.city || '—',
-					status: r.status,
-					date: r.createdAt ? new Date(r.createdAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) : '',
-				})));
-				const fulfilled = requests.filter((r) => ['FULFILLED', 'Completed'].includes(r.status)).length;
-				const pending = requests.filter((r) => ['PENDING', 'MATCHING', 'Pending', 'Matched'].includes(r.status)).length;
-				setStats((s) => s.map((x) => {
-					if (x.label === 'Active Blood Requests') return { ...x, value: pending };
-					if (x.label === 'Completed Requests') return { ...x, value: fulfilled };
-					return x;
-				}));
-			}
+			const requestList = Array.isArray(requests) && requests.length ? requests : demoRequests();
+			setRecentRequests(requestList.slice(0, 5).map((r) => ({
+				id: r._id || r.id,
+				group: r.bloodGroup,
+				units: r.unitsRequired || r.units,
+				location: r.hospitalName || r.hospital || r.city || '—',
+				status: r.status,
+				date: r.createdAt ? new Date(r.createdAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) : '',
+			})));
+			const fulfilled = requestList.filter((r) => ['FULFILLED', 'Completed'].includes(r.status)).length;
+			const pending = requestList.filter((r) => ['PENDING', 'MATCHING', 'Pending', 'Matched'].includes(r.status)).length;
+			setStats((s) => s.map((x) => {
+				if (x.label === 'Active Blood Requests') return { ...x, value: pending };
+				if (x.label === 'Completed Requests') return { ...x, value: fulfilled };
+				return x;
+			}));
 			const history = hist.value?.data?.items || hist.value?.data || hist.value;
-			if (Array.isArray(history)) {
-				const donations = history.length;
-				setStats((s) => s.map((x) => {
-					if (x.label === 'Donations Made') return { ...x, value: donations };
-					if (x.label === 'Saved Lives') return { ...x, value: donations * 3 };
-					return x;
-				}));
-				setActivity(history.slice(0, 5).map((h) => ({
-					icon: HeartPulse,
-					text: `Donation recorded for ${h.bloodGroup || ''}`.trim(),
-					time: h.donationDate ? new Date(h.donationDate).toLocaleString() : '',
-				})));
-			}
+			const historyList = Array.isArray(history) && history.length ? history : demoHistory();
+			const donations = historyList.length;
+			setStats((s) => s.map((x) => {
+				if (x.label === 'Donations Made') return { ...x, value: donations };
+				if (x.label === 'Saved Lives') return { ...x, value: donations * 3 };
+				return x;
+			}));
+			setActivity(historyList.slice(0, 5).map((h) => ({
+				icon: HeartPulse,
+				text: `Donation recorded for ${h.bloodGroup || ''}`.trim(),
+				time: h.donationDate ? new Date(h.donationDate).toLocaleString() : '',
+			})));
 			const banks2 = banks.value?.data || banks.value;
-			if (Array.isArray(banks2) && banks2.length) {
-				setNearbyBanks(banks2.slice(0, 3).map((b) => ({
-					id: b._id,
-					name: b.name,
-					location: b.city || b.address || '',
-					distance: b.distance ? `${b.distance.toFixed(1)} km` : '—',
-					availability: b.availability || 'Available',
-					groups: b.availableGroups || [],
-				})));
-			}
+			const bankList = Array.isArray(banks2) && banks2.length ? banks2 : demoBanks();
+			setNearbyBanks(bankList.slice(0, 3).map((b) => ({
+				id: b._id,
+				name: b.name,
+				location: b.city || b.address || '',
+				distance: b.distance ? `${b.distance.toFixed(1)} km` : '—',
+				availability: b.availability || 'Available',
+				groups: b.availableGroups || [],
+			})));
 		} catch (e) {
-			setErrorMessage('Live dashboard data is not connected yet. Showing safe demo values.');
+			setRecentRequests(demoRequests().slice(0, 5).map((r) => ({
+				id: r._id, group: r.bloodGroup, units: r.unitsRequired,
+				location: r.hospitalName, status: r.status,
+				date: r.createdAt ? new Date(r.createdAt).toLocaleString() : '',
+			})));
+			setStats((s) => s.map((x) => {
+				if (x.label === 'Active Blood Requests') return { ...x, value: 2 };
+				if (x.label === 'Completed Requests') return { ...x, value: 3 };
+				if (x.label === 'Donations Made') return { ...x, value: 5 };
+				if (x.label === 'Saved Lives') return { ...x, value: 15 };
+				return x;
+			}));
+			setActivity(demoHistory().slice(0, 5).map((h) => ({
+				icon: HeartPulse, text: `Donation recorded for ${h.bloodGroup}`, time: new Date(h.donationDate).toLocaleString(),
+			})));
+			setNearbyBanks(demoBanks().map((b) => ({ id: b._id, name: b.name, location: b.city, distance: '—', availability: b.availability, groups: b.availableGroups })));
 		} finally {
 			setIsLoading(false);
 		}

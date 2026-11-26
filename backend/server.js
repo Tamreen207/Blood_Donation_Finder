@@ -15,6 +15,7 @@ import adminRoutes from './routes/adminRoutes.js';
 import matchingRoutes from './routes/matchingRoutes.js';
 import donationRoutes from './routes/donationRoutes.js';
 import publicRoutes from './routes/publicRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 
 dotenv.config();
@@ -44,6 +45,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/matching', matchingRoutes);
 app.use('/api/donations', donationRoutes);
+app.use('/api/users', userRoutes);
 
 // Serve frontend build in production/single-command mode
 const distPath = path.resolve(__dirname, '../frontend/dist');
