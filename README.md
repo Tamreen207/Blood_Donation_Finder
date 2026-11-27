@@ -1,359 +1,355 @@
-# 🩸 LifeLink — Blood Donation & Blood Bank Finder
+::: {align="center"}
+# 🩸 LifeLink --- Blood Donation & Blood Bank Finder
 
-<p align="center">
-  <strong>Connecting Blood Donors, Saving Lives.</strong>
-  <br/>
-  A smart, full-stack platform designed to connect blood donors, people in need of blood, and blood banks.
+### Connecting Blood Donors. Supporting Blood Seekers. Helping Save Lives.
+
+A full-stack web application that helps people discover blood donors and
+blood banks, create and track blood requests, and manage
+donation-related workflows through role-based dashboards.
+
+[![React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![Node.js](https://img.shields.io/badge/Backend-Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/API-Express.js-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![JavaScript](https://img.shields.io/badge/Language-JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+
+**[View
+Repository](https://github.com/Tamreen207/Blood_Donation_Finder)**
+:::
+
+------------------------------------------------------------------------
+
+## 📖 About LifeLink
+
+Finding a suitable blood donor or blood bank during an emergency can be
+difficult and time-sensitive. **LifeLink** is designed to make that
+process easier by bringing blood seekers, donors, and blood banks
+together on one platform.
+
+The application provides workflows for searching donors and blood banks,
+submitting blood requests, tracking requests, and managing user and
+blood-bank information. It uses a React + Vite frontend, a Node.js +
+Express backend, and MongoDB for data storage.
+
+### 🎯 Project Goals
+
+-   Make donor and blood-bank discovery easier.
+-   Help users search using blood group and location information.
+-   Support creation and tracking of regular and emergency blood
+    requests.
+-   Provide dedicated workflows for donors, seekers, blood banks, and
+    administrators.
+-   Organize donation-related information through a centralized web
+    application.
+
+## ✨ Features
+
+  -----------------------------------------------------------------------
+  Module                              Capabilities
+  ----------------------------------- -----------------------------------
+  **User accounts**                   Registration, login, and role-based
+                                      experiences
+
+  **Donor management**                Donor profiles and
+                                      blood-group/location information
+
+  **Find blood**                      Search for potential donors and
+                                      blood banks
+
+  **Blood requests**                  Create and track blood requests,
+                                      including emergency requests
+
+  **Blood banks**                     Blood-bank information and
+                                      inventory/request workflows
+
+  **Notifications**                   Notification interface for relevant
+                                      application updates
+
+  **Dashboard**                       Dashboard views for monitoring user
+                                      workflows
+
+  **Authentication**                  JWT-based authentication and
+                                      protected routes
+
+  **Administration**                  Administrative dashboard and
+                                      endpoints where implemented
+  -----------------------------------------------------------------------
+
+> Features and access depend on the configured backend, database, and
+> implemented user role.
+
+## 🖥️ Application Screenshots
+
+The screenshots below are linked to image files in the **root of this
+GitHub repository**. Keep the filenames unchanged, or update the paths
+if you move the images into another folder.
+
+### Home
+
+::: {align="center"}
+`<img src="Home.png" alt="LifeLink home page" width="90%">`{=html}
+```{=html}
+<p>
+```
+`<em>`{=html}LifeLink landing page`</em>`{=html}
+```{=html}
 </p>
+```
+:::
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Project-LifeLink-red?style=for-the-badge" />
-  <img src="https://img.shields.io/badge/Frontend-React%20%2B%20Vite-blue?style=for-the-badge" />
-  <img src="https://img.shields.io/badge/Backend-Node.js%20%2B%20Express-green?style=for-the-badge" />
-  <img src="https://img.shields.io/badge/Database-MongoDB-darkgreen?style=for-the-badge" />
-  <img src="https://img.shields.io/badge/Language-JavaScript-yellow?style=for-the-badge" />
+### Login and Registration
+
+::: {align="center"}
+`<img src="login.png" alt="LifeLink login page" width="48%">`{=html}
+`<img src="register.png" alt="LifeLink registration page" width="48%">`{=html}
+```{=html}
+<p>
+```
+`<em>`{=html}User authentication and account registration`</em>`{=html}
+```{=html}
 </p>
+```
+:::
 
----
+### Dashboard
 
-## 📌 Table of Contents
+::: {align="center"}
+`<img src="Dashboard.png" alt="LifeLink dashboard" width="90%">`{=html}
+```{=html}
+<p>
+```
+`<em>`{=html}Application dashboard`</em>`{=html}
+```{=html}
+</p>
+```
+:::
 
-- [About the Project](#-about-the-project)
-- [Project Objectives](#-project-objectives)
-- [Key Features](#-key-features)
-- [Screenshots](#-screenshots)
-- [Technology Stack](#-technology-stack)
-- [System Architecture](#-system-architecture)
-- [Project Structure](#-project-structure)
-- [Installation and Setup](#-installation-and-setup)
-- [Environment Configuration](#-environment-configuration)
-- [Running the Application](#-running-the-application)
-- [Testing](#-testing)
-- [Production Build](#-production-build)
-- [How It Works](#-how-it-works)
-- [Security and Safety](#-security-and-safety)
-- [Future Enhancements](#-future-enhancements)
-- [Contributing](#-contributing)
-- [Author](#-author)
+### Find Blood and Blood Banks
 
----
+::: {align="center"}
+`<img src="find_blood.png" alt="Find blood page" width="48%">`{=html}
+`<img src="Blood_Banks.png" alt="Blood banks page" width="48%">`{=html}
+```{=html}
+<p>
+```
+`<em>`{=html}Blood search and blood-bank discovery`</em>`{=html}
+```{=html}
+</p>
+```
+:::
 
-## 🌟 About the Project
+### Emergency Requests and Notifications
 
-**LifeLink** is a full-stack web application developed to simplify the process of finding blood donors and blood banks during medical emergencies.
+::: {align="center"}
+`<img src="emergency-request.png" alt="Emergency blood request page" width="48%">`{=html}
+`<img src="notifications.png" alt="Notifications page" width="48%">`{=html}
+```{=html}
+<p>
+```
+`<em>`{=html}Emergency request and notification workflows`</em>`{=html}
+```{=html}
+</p>
+```
+:::
 
-Finding compatible blood donors at the right time can be challenging. LifeLink aims to reduce this difficulty by providing a centralized platform where blood seekers can search for donors and blood banks, submit blood requests, and track their request status.
+### User Profile
 
-The platform supports multiple user roles, including:
+::: {align="center"}
+`<img src="profile.png" alt="LifeLink user profile" width="70%">`{=html}
+```{=html}
+<p>
+```
+`<em>`{=html}User profile`</em>`{=html}
+```{=html}
+</p>
+```
+:::
 
-- 🧑‍🦱 Blood Donors
-- ❤️ Blood Seekers
-- 🏥 Blood Banks
-- 🛡️ Administrators
+## 🧰 Technology Stack
 
-LifeLink combines a modern React frontend with a Node.js and Express backend, using MongoDB for data management.
+  Layer             Technology
+  ----------------- ------------------------------
+  Frontend          React.js, Vite
+  Styling           CSS
+  Backend           Node.js, Express.js
+  Database          MongoDB
+  ODM               Mongoose
+  Authentication    JSON Web Token (JWT)
+  API style         REST API
+  Testing           Node.js built-in test runner
+  Version control   Git and GitHub
 
-**Our Mission:** Make blood donation connections easier, faster, and more accessible through technology.
+## 🏛️ High-Level Architecture
 
-## 🎯 Project Objectives
-
-- Provide a centralized blood donor and blood bank finder.
-- Help users search based on blood group and location.
-- Simplify blood request creation and tracking.
-- Support donor and blood bank management.
-- Provide role-based access to different users.
-- Improve communication between blood seekers and potential donors.
-- Support better access to blood availability information.
-
-## 🚀 Key Features
-
-### 🧑‍🦱 1. Donor Management
-- Donor registration and login.
-- Donor profile management.
-- Blood group and location information.
-- Donor search and matching functionality.
-- Role-based donor dashboard.
-
-### ❤️ 2. Blood Request Management
-- Create blood requests.
-- Submit emergency blood requests.
-- Track request status.
-- Manage request information.
-- Connect seekers with potential donors and blood banks.
-
-### 🏥 3. Blood Bank Management
-- Blood bank registration and login.
-- Blood bank information management.
-- Inventory management.
-- Blood request handling.
-- Blood availability status management.
-
-### 🔍 4. Smart Search
-- Search donors by blood group.
-- Find blood banks based on location.
-- Matching and ranking services.
-- Distance-related utility functionality.
-
-### 🛡️ 5. Admin Management
-- Administrative dashboard.
-- Role-based access control.
-- Management of platform workflows.
-- Access to administrative endpoints and interfaces where implemented.
-
-### 🔐 6. Authentication and Security
-- JWT-based authentication.
-- Protected API routes.
-- Role-based authorization.
-- Input validation.
-- Centralized error handling.
-
----
-
-## 📸 Screenshots
-
-Screenshots help visitors understand your application without running the project.
-
-Add your actual application screenshots inside `docs/screenshots/`.
-
-### 1. Home Page
-![LifeLink Home Page](docs/screenshots/homepage.png)
-
-### 2. User Authentication
-![Login Page](docs/screenshots/login.png)
-
-### 3. Donor Dashboard
-![Donor Dashboard](docs/screenshots/donor-dashboard.png)
-
-### 4. Blood Bank Dashboard
-![Blood Bank Dashboard](docs/screenshots/blood-bank-dashboard.png)
-
-### 5. Blood Request Management
-![Blood Request](docs/screenshots/blood-request.png)
-
-### 6. Admin Dashboard
-![Admin Dashboard](docs/screenshots/admin-dashboard.png)
-
-> Replace these image paths with your actual screenshots. Remove any screenshot section for a page that is not implemented.
-
----
-
-## 🛠️ Technology Stack
-
-| Category | Technologies |
-|---|---|
-| Frontend | React.js, Vite |
-| Styling | CSS |
-| Backend | Node.js, Express.js |
-| Database | MongoDB |
-| ODM | Mongoose |
-| Authentication | JSON Web Token (JWT) |
-| API | REST API |
-| Testing | Node.js Built-in Test Runner |
-| Version Control | Git and GitHub |
-
-## 🏗️ System Architecture
-
-LifeLink follows a frontend-backend architecture.
-
-```text
-             ┌─────────────────────────┐
-             │       USERS             │
-             │                         │
-             │ Donor / Seeker / Bank   │
-             │       / Admin           │
-             └────────────┬────────────┘
-                          │
-                          ▼
-             ┌─────────────────────────┐
-             │     REACT FRONTEND      │
-             │                         │
-             │       Vite              │
-             │       UI Components     │
-             │       Pages             │
-             └────────────┬────────────┘
-                          │
-                          ▼
-             ┌─────────────────────────┐
-             │     EXPRESS REST API    │
-             │                         │
-             │ Authentication          │
-             │ Controllers             │
-             │ Routes                  │
-             │ Middleware              │
-             │ Services                │
-             └────────────┬────────────┘
-                          │
-                          ▼
-             ┌─────────────────────────┐
-             │       MONGODB           │
-             │                         │
-             │ User Data               │
-             │ Blood Requests          │
-             │ Blood Bank Information  │
-             │ Inventory Data          │
-             └─────────────────────────┘
+``` text
+┌─────────────────────────────────────────────────────┐
+│                    APPLICATION USERS                │
+│          Donor  •  Seeker  •  Blood Bank  •  Admin   │
+└──────────────────────────┬──────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────┐
+│                 FRONTEND — REACT + VITE             │
+│             Pages • Components • UI • Services      │
+└──────────────────────────┬──────────────────────────┘
+                           │ HTTP / REST API
+                           ▼
+┌─────────────────────────────────────────────────────┐
+│                BACKEND — NODE + EXPRESS             │
+│       Routes • Controllers • Middleware • Services  │
+│             Authentication • Validation             │
+└──────────────────────────┬──────────────────────────┘
+                           │ Mongoose
+                           ▼
+┌─────────────────────────────────────────────────────┐
+│                      MONGODB                        │
+│             Application and user data               │
+└─────────────────────────────────────────────────────┘
 ```
 
-## 📂 Project Structure
+## 📁 Project Structure
 
-```text
-LifeLink/
-│
+``` text
+Blood_Donation_Finder/
 ├── backend/
 │   ├── controllers/
+│   ├── middleware/
 │   ├── models/
 │   ├── routes/
-│   ├── middleware/
 │   ├── services/
 │   ├── utils/
 │   ├── seed.js
 │   └── .env.example
-│
+├── database/
+│   └── schemas/
+├── docs/
 ├── frontend/
+│   ├── public/
 │   ├── src/
 │   │   ├── components/
 │   │   ├── pages/
 │   │   ├── services/
 │   │   └── utils/
-│   ├── public/
 │   └── package.json
-│
 ├── tests/
-│   ├── unit/
-│   ├── integration/
-│   ├── system/
-│   ├── whitebox/
-│   └── blackbox/
-│
-├── docs/
-│   └── screenshots/
-│
+├── Blood_Banks.png
+├── Dashboard.png
+├── Home.png
+├── emergency-request.png
+├── find_blood.png
+├── login.png
+├── notifications.png
+├── profile.png
+├── register.png
 ├── package.json
 └── README.md
 ```
 
-## ⚙️ Installation and Setup
-
-Follow these steps to run LifeLink locally.
+## ⚙️ Getting Started
 
 ### Prerequisites
 
-Install the following software:
+Install the following before running the application:
 
-- Node.js 18 or above (Node.js 20+ recommended).
-- npm.
-- MongoDB (local installation or MongoDB connection URI).
-- Git.
+-   **Node.js 18 or later** (Node.js 20+ recommended)
+-   **npm**
+-   **MongoDB**, running locally or available through a MongoDB
+    connection URI
+-   **Git**
 
-### Step 1: Clone the Repository
+### 1. Clone the repository
 
-```bash
+``` bash
 git clone https://github.com/Tamreen207/Blood_Donation_Finder.git
 ```
 
-### Step 2: Navigate to the Project
+### 2. Open the project directory
 
-```bash
+``` bash
 cd Blood_Donation_Finder
 ```
 
-### Step 3: Install Dependencies
+### 3. Install dependencies
 
-```bash
+``` bash
 npm install --prefix backend && npm install --prefix frontend
 ```
 
-### Step 4: Configure Environment Variables
+### 4. Configure environment variables
 
-Create the backend `.env` file using `.env.example` and configure your database connection and authentication settings.
+Create `backend/.env` using `backend/.env.example` as a reference. Add
+your MongoDB connection string and a strong JWT secret.
 
-### Step 5: Start the Application
+Example:
 
-```bash
-npm start
-```
-
-The application builds the frontend and starts the backend server.
-
-## 🔑 Environment Configuration
-
-### Backend Configuration
-
-Create `backend/.env`:
-
-```env
+``` env
 PORT=5000
 MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_strong_random_secret
+JWT_SECRET=replace_with_a_strong_random_secret
 JWT_EXPIRES_IN=7d
 CLIENT_ORIGIN=http://localhost:5173
 ```
 
-### Frontend Configuration
+If your frontend requires a separate API base URL, create
+`frontend/.env`:
 
-Create `frontend/.env` if required:
-
-```env
+``` env
 VITE_API_BASE_URL=http://localhost:5000
 ```
 
-**Important:** Never upload `.env` files, database credentials, JWT secrets, or other sensitive information to GitHub.
+**Keep secrets private.** Do not commit `.env` files, database
+credentials, or production tokens to GitHub.
 
-## ▶️ Running the Application
+### 5. Start the application
 
-### Production Mode
+From the project root:
 
-```bash
+``` bash
 npm start
 ```
 
-Application URL:
+The start script builds the frontend and starts the backend server,
+which serves the built frontend and API from the same origin.
 
-http://localhost:5000
+  Service            Address
+  ------------------ ----------------------------------
+  Application        http://localhost:5000
+  API health check   http://localhost:5000/api/health
 
-Health Check:
+### Development mode
 
-http://localhost:5000/api/health
+To run the frontend and backend development servers together:
 
-### Development Mode
-
-Install dependencies:
-
-```bash
-npm install --prefix backend && npm install --prefix frontend
-```
-
-Start development servers:
-
-```bash
+``` bash
 npm run dev
 ```
 
-Development URLs:
+  Service            Address
+  ------------------ ----------------------------------
+  Vite frontend      http://localhost:5173
+  Backend API        http://localhost:5000
+  API health check   http://localhost:5000/api/health
 
-| Service | URL |
-|---|---|
-| Frontend | http://localhost:5173 |
-| Backend API | http://localhost:5000 |
-| API Health Check | http://localhost:5000/api/health |
-
-The Vite development server proxies API requests to the backend.
-
-**Database Requirement:** MongoDB must be running and correctly configured for database-dependent features.
+The Vite development server proxies `/api` requests to the backend.
+MongoDB must be configured and available for database-dependent
+features.
 
 ## 🧪 Testing
 
-LifeLink includes automated testing using the Node.js built-in test runner.
+The project includes automated test suites using the Node.js built-in
+test runner. The included suites are designed to run without a database;
+complete database-backed workflows require a configured MongoDB instance
+and test data.
 
-Run all test suites:
+Run all tests:
 
-```bash
+``` bash
 npm test
 ```
 
-Individual test suites:
+Run an individual suite:
 
-```bash
+``` bash
 npm run test:unit
 npm run test:integration
 npm run test:system
@@ -361,99 +357,97 @@ npm run test:whitebox
 npm run test:blackbox
 ```
 
-### Testing Coverage
-
-| Test Type | Purpose |
-|---|---|
-| Unit Testing | Tests individual functions and utilities |
-| Integration Testing | Tests API and component interactions |
-| System Testing | Checks project structure and required modules |
-| White-box Testing | Tests internal logic and control flow |
-| Black-box Testing | Validates API behavior and external responses |
-
-The included test suites do not require a database. Full database-backed workflows require MongoDB and configured test accounts.
+  Suite         Focus
+  ------------- ---------------------------------------------------------
+  Unit          Individual functions and utilities
+  Integration   API behavior, authentication, and route interactions
+  System        Project structure and required modules
+  White-box     Internal logic and control-flow behavior
+  Black-box     External API contracts, validation, and error responses
 
 ## 📦 Production Build
 
-To generate an optimized frontend production build:
+Build the frontend:
 
-```bash
+``` bash
 npm run build
 ```
 
-The generated production files are available inside:
+The production frontend output is generated in:
 
-```text
+``` text
 frontend/dist/
 ```
 
-## 🔄 How It Works
+## 🔁 Typical User Workflow
 
-1. Users register and log in according to their role.
-2. Blood seekers provide their blood group and location requirements.
-3. The application searches for matching donors and blood banks.
-4. Users can create and track blood requests.
-5. Donors and blood banks can manage relevant requests.
-6. Administrators can access administrative workflows.
+1.  A user registers and signs in using the appropriate account type.
+2.  A blood seeker searches using blood group and location requirements.
+3.  The application displays potential donor or blood-bank matches.
+4.  The seeker can submit a blood request, including an emergency
+    request.
+5.  Donors and blood banks can manage relevant request workflows.
+6.  Users can view request-related updates through the application
+    interface.
 
-## 🔒 Security and Safety
+## 🔐 Security and Medical Safety
 
-LifeLink is designed with security and responsible blood donation practices in mind.
+-   Use a strong, unique `JWT_SECRET`.
+-   Keep database credentials and private configuration out of source
+    control.
+-   Use HTTPS and appropriate security controls in production.
+-   Validate user input and protect routes according to user roles.
+-   Do not present unverified, expired, or fabricated inventory as
+    confirmed availability.
+-   Donor eligibility, blood compatibility, laboratory crossmatching,
+    and decisions to issue blood must be confirmed by qualified
+    professionals at authorized blood centres.
 
-- JWT-based authentication and protected routes.
-- Role-based authorization.
-- Input validation and error handling.
-- Secure management of database credentials.
-- HTTPS recommended for production deployment.
-- Blood availability information must be verified before being presented as confirmed.
+**LifeLink is an information and coordination application. It does not
+replace medical advice, professional donor screening, laboratory
+testing, or the procedures of authorized blood centres.**
 
-**Medical Safety:** The application does not replace professional medical advice. Donor eligibility, blood compatibility confirmation, laboratory crossmatching, and blood issue decisions must be handled by qualified professionals and authorized blood centres.
+## 🚀 Possible Future Improvements
 
-## 🔮 Future Enhancements
-
-Potential future improvements include:
-
-- Real-time notifications for blood requests.
-- Email and SMS alerts.
-- Map-based donor and blood bank discovery.
-- Improved emergency request workflows.
-- Enhanced blood inventory reporting.
-- More advanced analytics and dashboards.
-- Mobile application support.
+-   Real-time request notifications.
+-   Email and SMS alerts.
+-   Map-based donor and blood-bank discovery.
+-   Additional emergency request coordination.
+-   Improved inventory reporting and analytics.
+-   Mobile application support.
 
 ## 🤝 Contributing
 
-Contributions and suggestions are welcome!
+Suggestions and contributions are welcome.
 
-1. Fork this repository.
-2. Create a new feature branch.
-3. Make your changes.
-4. Test your changes.
-5. Commit your work.
-6. Submit a pull request.
+1.  Fork the repository.
+2.  Create a feature branch.
+3.  Make and test your changes.
+4.  Commit your changes.
+5.  Push the branch and open a pull request.
 
-```bash
+``` bash
 git checkout -b feature/your-feature
 git add .
-git commit -m "Add your feature"
+git commit -m "Describe your changes"
 git push origin feature/your-feature
 ```
 
 ## 👩‍💻 Author
 
-**Syed Tamreen**
+**Syed Tamreen**\
+B.Tech --- Computer Science and Engineering\
+Rajiv Gandhi University of Knowledge Technologies (RGUKT), RK Valley
 
-B.Tech – Computer Science and Engineering
+-   **GitHub:** [@Tamreen207](https://github.com/Tamreen207)
+-   **Project:** [LifeLink --- Blood Donation & Blood Bank
+    Finder](https://github.com/Tamreen207/Blood_Donation_Finder)
 
-Rajiv Gandhi University of Knowledge Technologies (RGUKT), RK Valley.
+------------------------------------------------------------------------
 
-- GitHub: [@Tamreen207](https://github.com/Tamreen207)
-- Project Repository: [Blood_Donation_Finder](https://github.com/Tamreen207/Blood_Donation_Finder)
+::: {align="center"}
+### 🩸 Every Drop Counts. Every Donor Matters. Every Life Is Precious.
 
----
-
-<p align="center">
-  <strong>🩸 Every Drop Counts. Every Donor Matters. Every Life Is Precious.</strong>
-  <br/><br/>
-  Made with ❤️ to support blood donation and help save lives.
-</p>
+**Built with ❤️ to support blood donation and help people find blood
+resources.**
+:::
