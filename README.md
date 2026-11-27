@@ -139,25 +139,25 @@ application. Place the corresponding image files inside
 ## 📸 Screenshots
 
 ### 1. Home
-![Home](docs/screenshots/home.png)
+![Home](docs/Screenshots/home.png)
 
 ### 2. Login
-![Login](docs/screenshots/login.png)
+![Login](docs/Screenshots/login.png)
 
 ### 3. Register
-![Register](docs/screenshots/register.png)
+![Register](docs/Screenshots/register.png)
 
 ### 4. Dashboard
-![Dashboard](docs/screenshots/dashboard.png)
+![Dashboard](docs/Screenshots/dashboard.png)
 
 ### 5. Find Blood
-![Find Blood](docs/screenshots/find-blood.png)
+![Find Blood](docs/Screenshots/find-blood.png)
 
 ### 6. Blood Bank
-![Blood Bank](docs/screenshots/blood-banks.png)
+![Blood Bank](docs/Screenshots/blood-banks.png)
 
 ### 7. Emergency Request
-![Emergency Request](docs/screenshots/emergency-request.png)
+![Emergency Request](docs/Screenshots/emergency-request.png)
 
 ### 8. Profile
 ![Profile](docs/screenshots/profile.png)
