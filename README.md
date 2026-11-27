@@ -136,41 +136,35 @@ The following screenshots showcase the main features of the LifeLink
 application. Place the corresponding image files inside
 `docs/screenshots/` using the exact filenames shown below.
 
-### 1. Home
+## 📸 Screenshots
 
-![LifeLink Home](docs/screenshots/home.png)    
+### 1. Home
+![Home](docs/screenshots/home.png)
 
 ### 2. Login
-
-![LifeLink Login](docs/screenshots/login.png)
+![Login](docs/screenshots/login.png)
 
 ### 3. Register
+![Register](docs/screenshots/register.png)
 
-![LifeLink Register](docs/screenshots/register.png)
+### 4. Dashboard
+![Dashboard](docs/screenshots/dashboard.png)
 
-### 4.Dashboard
-
-![Dashboard](docs/screenshots/Dashboard.png)
-
-### 4. Find Blood
-
+### 5. Find Blood
 ![Find Blood](docs/screenshots/find-blood.png)
 
-### 5. Blood Bank
+### 6. Blood Bank
+![Blood Bank](docs/screenshots/blood-banks.png)
 
-![Blood Bank](docs/screenshts/blood-banks.png)
-
-### 6. Emergency Request
-
+### 7. Emergency Request
 ![Emergency Request](docs/screenshots/emergency-request.png)
 
-### 7. Profile
+### 8. Profile
+![Profile](docs/screenshots/profile.png)
 
-![User Profile](docs/screenshots/profile.png)
-
-### 8. Notifications
-
+### 9. Notifications
 ![Notifications](docs/screenshots/notifications.png)
+
 
 > **Note:** Add your actual screenshots to `docs/screenshots/` and make
 > sure each filename matches the paths above. GitHub will display the
