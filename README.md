@@ -154,7 +154,7 @@ application. Place the corresponding image files inside
 ![Find Blood](docs/Screenshots/find-blood.png)
 
 ### 6. Blood Bank
-![Blood Bank](docs/Screenshots/blood-banks.png)
+![Blood Bank](docs/Screenshots/Blood_Banks.png)
 
 ### 7. Emergency Request
 ![Emergency Request](docs/Screenshots/emergency-request.png)
