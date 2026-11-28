@@ -139,7 +139,7 @@ application. Place the corresponding image files inside
 ## 📸 Screenshots
 
 ### 1. Home
-![Home](docs/Screenshots/home.png)
+![Home](docs/Screenshots/Home.png)
 
 ### 2. Login
 ![Login](docs/Screenshots/login.png)
